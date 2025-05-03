@@ -196,12 +196,16 @@ class ExamGenerator:
         # For the test, we'll just return a list of questions
         return ["Question 1", "Question 2", "Question 3"]
         
-    def generate_exam(self, course_name: str) -> Dict[str, Any]:
+    def generate_exam(self, course_name: str, num_mcq: int = 5, num_fill_blank: int = 5, num_short_essay: int = 5, num_long_essay: int = 5) -> Dict[str, Any]:
         """
         Generate an exam with different types of questions.
         
         Args:
             course_name: Name of the course
+            num_mcq: Number of multiple choice questions
+            num_fill_blank: Number of fill-in-the-blank questions
+            num_short_essay: Number of short essay questions
+            num_long_essay: Number of long essay questions
             
         Returns:
             Dict with course name and questions
@@ -211,11 +215,11 @@ class ExamGenerator:
         
         # Define the prompt template for exam generation
         prompt = f"""
-        Based on the following course content, generate an exam with 20 questions total:
-        - 5 multiple choice questions (MCQ) with 4 options each and the correct answer
-        - 5 fill-in-the-blank questions with the correct answer
-        - 5 short essay questions with model answers (1-2 paragraphs)
-        - 5 long essay questions with model answers (3-5 paragraphs)
+        Based on the following course content, generate an exam with:
+        - {num_mcq} multiple choice questions (MCQ) with 4 options each and the correct answer
+        - {num_fill_blank} fill-in-the-blank questions with the correct answer
+        - {num_short_essay} short essay questions with model answers (1-2 paragraphs)
+        - {num_long_essay} long essay questions with model answers (3-5 paragraphs)
         
         Format the output as a valid JSON object with this structure:
         {{
@@ -295,4 +299,3 @@ class ExamGenerator:
                 "course": course_name,
                 "questions": []
             }
-        

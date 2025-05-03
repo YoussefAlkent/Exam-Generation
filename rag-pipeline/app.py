@@ -213,6 +213,16 @@ with tab2:
     if not st.session_state.course_name:
         st.session_state.course_name = st.text_input("Enter course name (if not set in Upload tab)", key="tab2_course")
     
+    # Add inputs for customizing question counts
+    st.subheader("Customize Question Counts")
+    col1, col2 = st.columns(2)
+    with col1:
+        num_mcq = st.number_input("Multiple Choice Questions", min_value=0, max_value=20, value=5, step=1)
+        num_fill_blank = st.number_input("Fill in the Blank Questions", min_value=0, max_value=20, value=5, step=1)
+    with col2:
+        num_short_essay = st.number_input("Short Essay Questions", min_value=0, max_value=20, value=5, step=1)
+        num_long_essay = st.number_input("Long Essay Questions", min_value=0, max_value=20, value=5, step=1)
+    
     # Button to generate exam
     if st.button("Generate Exam"):
         if not st.session_state.course_name:
@@ -223,7 +233,14 @@ with tab2:
                     # Use the configured model
                     model_config = st.session_state.model_config
                     generator = ExamGenerator(model_name=model_config.get("model_name", "llama3"))
-                    exam_data = generator.generate_exam(st.session_state.course_name)
+                    # Pass the question counts to the generator
+                    exam_data = generator.generate_exam(
+                        st.session_state.course_name,
+                        num_mcq=num_mcq,
+                        num_fill_blank=num_fill_blank,
+                        num_short_essay=num_short_essay,
+                        num_long_essay=num_long_essay
+                    )
                     
                     if not exam_data or "questions" not in exam_data or not exam_data["questions"]:
                         st.error("Failed to generate questions. Ensure the course material is properly ingested.")
@@ -397,25 +414,19 @@ with tab4:
         if uploaded_exam and uploaded_student_answers:
             try:
                 exam_json = json.loads(uploaded_exam.getvalue().decode())
+                st.success("Successfully loaded exam file")
                 
                 if "questions" not in exam_json:
                     st.error("Invalid exam JSON: 'questions' field is required")
                 else:
-                    # Parse all student answer files
+                    # Process each student answer file
                     student_answer_list = []
                     for answer_file in uploaded_student_answers:
                         try:
                             student_answer = json.loads(answer_file.getvalue().decode())
                             
-                            # Check for required fields
-                            if "Student-ID" not in student_answer:
-                                st.warning(f"Warning: Student-ID not found in answer file {answer_file.name}")
-                                student_answer["Student-ID"] = "Unknown"
-                            if "Student-Name" not in student_answer:
-                                st.warning(f"Warning: Student-Name not found in answer file {answer_file.name}")
-                                student_answer["Student-Name"] = "Anonymous"
                             if "answers" not in student_answer:
-                                st.error(f"Error: 'answers' field is required in answer file {answer_file.name}")
+                                st.warning(f"Skipping {answer_file.name} - 'answers' field is required")
                                 continue
                             
                             student_answer_list.append(student_answer)
