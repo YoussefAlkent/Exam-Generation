@@ -1,0 +1,7 @@
+pytest
+setuptools
+wheel
+langchain
+chromadb
+PyPDF2
+```

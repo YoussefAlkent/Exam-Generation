@@ -1,0 +1,6 @@
+class Embedder:
+    def __init__(self, model):
+        self.model = model
+
+    def generate_embeddings(self, text):
+        return self.model.embed(text)

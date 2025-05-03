@@ -1,0 +1,22 @@
+class Retriever:
+    def __init__(self, vector_store):
+        self.vector_store = vector_store
+
+    def retrieve_documents(self, query, top_k=5):
+        """
+        Retrieve the top_k relevant documents from the vector store based on the query.
+
+        Args:
+            query (str): The query string to search for.
+            top_k (int): The number of top relevant documents to retrieve.
+
+        Returns:
+            list: A list of retrieved documents.
+        """
+        # Convert the query into a vector
+        query_vector = self.vector_store.embed_query(query)
+        
+        # Retrieve the top_k documents from the vector store
+        documents = self.vector_store.query(query_vector, top_k)
+        
+        return documents

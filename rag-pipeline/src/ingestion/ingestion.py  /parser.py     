@@ -1,0 +1,16 @@
+class IngestionPipeline:
+    def __init__(self, pdf_directory, vectorizer):
+        self.pdf_directory = pdf_directory
+        self.vectorizer = vectorizer
+
+    def ingest_pdfs(self):
+        # Logic to ingest PDFs from the specified directory
+        pass
+
+    def create_collection(self):
+        # Logic to create a collection in the vector store
+        pass
+
+    def embed_text(self, text):
+        # Logic to embed the extracted text using the vectorizer
+        pass

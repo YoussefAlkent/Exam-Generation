@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "rag-pipeline"
+version = "0.1.0"
+description = "A Retrieval-Augmented Generation pipeline for processing and generating content from PDF documents."
+authors = ["Your Name <youremail@example.com>"]
+license = "MIT"
+
+[tool.poetry.dependencies]
+python = "^3.8"
+langchain = "^0.0.1"  # Replace with the actual version
+chromadb = "^0.0.1"   # Replace with the actual version
+PyPDF2 = "^1.26.0"    # Replace with the actual version
+
+[tool.poetry.dev-dependencies]
+pytest = "^6.2.5"
+setuptools = "^57.0.0"
+wheel = "^0.36.2"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

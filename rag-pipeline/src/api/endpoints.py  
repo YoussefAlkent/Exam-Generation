@@ -1,0 +1,30 @@
+from fastapi import FastAPI, HTTPException
+from src.ingestion.ingestion import IngestionPipeline
+from src.generation.generator import ExamGenerator
+from pydantic import BaseModel
+
+app = FastAPI()
+
+class PDFIngestionRequest(BaseModel):
+    pdf_files: list[str]
+
+class QuestionGenerationRequest(BaseModel):
+    context: str
+
+@app.post("/ingest-pdfs/")
+async def ingest_pdfs(request: PDFIngestionRequest):
+    try:
+        ingestion_pipeline = IngestionPipeline()
+        ingestion_pipeline.ingest_pdfs(request.pdf_files)
+        return {"message": "PDFs ingested successfully."}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/generate-questions/")
+async def generate_questions(request: QuestionGenerationRequest):
+    try:
+        exam_generator = ExamGenerator()
+        questions = exam_generator.generate_questions(request.context)
+        return {"questions": questions}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

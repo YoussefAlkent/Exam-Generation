@@ -1,0 +1,135 @@
+{
+  "course": "Generative_Adverserial_Networks",
+  "questions": [
+    {
+      "type": "mcq",
+      "question": "In GANs, what problem does W-Loss primarily address?",
+      "choices": [
+        "Overfitting",
+        "Mode collapse and vanishing gradients",
+        "High computational cost",
+        "Slow convergence speed"
+      ],
+      "answer": "B"
+    },
+    {
+      "type": "mcq",
+      "question": "What type of values does the discriminator output in a GAN using BCE Loss?",
+      "choices": [
+        "Any real value",
+        "Binary (0 or 1)",
+        "Values between 0 and 1",
+        "Integer values only"
+      ],
+      "answer": "C"
+    },
+    {
+      "type": "mcq",
+      "question": "What is a key characteristic of activation functions used in neural networks, including GANs?",
+      "choices": [
+        "Linear and non-differentiable",
+        "Non-linear and non-differentiable",
+        "Linear and differentiable",
+        "Non-linear and differentiable"
+      ],
+      "answer": "D"
+    },
+    {
+      "type": "mcq",
+      "question": "What is the Earth Mover's Distance (EMD) used for in the context of GANs?",
+      "choices": [
+        "To measure the difference between the discriminator and generator loss",
+        "To approximate the distance between real and generated distributions",
+        "To optimize the discriminator's performance",
+        "To regularize the generator's output"
+      ],
+      "answer": "B"
+    },
+    {
+      "type": "mcq",
+      "question": "During testing with Batch Normalization, which statistics are used?",
+      "choices": [
+        "Batch mean and batch standard deviation from the test batch",
+        "Running mean and running standard deviation from training",
+        "Fixed values set during initialization",
+        "Only the scale and shift parameters"
+      ],
+      "answer": "B"
+    },
+    {
+      "type": "fill_in_the_blank",
+      "question": "In GAN training, the generator aims to ______ the cost, while the discriminator aims to ______ the cost.",
+      "answer": "minimize, maximize"
+    },
+    {
+      "type": "fill_in_the_blank",
+      "question": "When the discriminator gets too good in a GAN trained with BCE Loss, the loss function can develop ______ ______, leading to vanishing gradients.",
+      "answer": "flat regions"
+    },
+    {
+      "type": "fill_in_the_blank",
+      "question": "Unlike unconditional generation, ______ generation allows you to control the features of the generated outputs.",
+      "answer": "conditional"
+    },
+    {
+      "type": "fill_in_the_blank",
+      "question": "In Batch Normalization, learnable ______ factors are introduced to get the optimal distribution.",
+      "answer": "shift and scale"
+    },
+    {
+      "type": "fill_in_the_blank",
+      "question": "The ______ vector is manipulated to control desired features in the context of Z-space interpolation.",
+      "answer": "noise"
+    },
+    {
+      "type": "short_essay",
+      "question": "Explain the concept of 'mode collapse' in the context of GANs.",
+      "answer": "Mode collapse occurs when the generator produces a limited variety of outputs, often focusing on a few modes of the target distribution. This happens because the generator finds a set of outputs that consistently fool the discriminator, but these outputs do not represent the full diversity of the real data. The generator essentially gets stuck producing the same or very similar outputs, regardless of the input noise."
+    },
+    {
+      "type": "short_essay",
+      "question": "Why are non-linear activation functions important in GANs and other neural networks?",
+      "answer": "Non-linear activation functions are crucial because they allow neural networks to approximate complex functions. Without non-linearities, the entire network would essentially behave like a linear regression model, severely limiting its ability to learn intricate patterns and relationships in the data. In GANs, non-linear activations enable the generator and discriminator to model complex data distributions."
+    },
+    {
+      "type": "short_essay",
+      "question": "Briefly describe how a convolution operation works.",
+      "answer": "A convolution operation involves sliding a filter (or kernel) over an input image or feature map. At each location, the filter performs element-wise multiplication with the corresponding portion of the input, and the results are summed to produce a single output value. This process is repeated across the entire input, creating a new feature map that represents specific features detected by the filter."
+    },
+    {
+      "type": "short_essay",
+      "question": "What is the purpose of the discriminator in a GAN?",
+      "answer": "The discriminator in a GAN acts as a binary classifier. Its purpose is to distinguish between real data samples from the training dataset and fake data samples generated by the generator. The discriminator is trained to maximize its accuracy in identifying real and fake samples, providing a signal to the generator about the quality of its generated outputs."
+    },
+    {
+      "type": "short_essay",
+      "question": "Explain the difference between conditional and unconditional generation in GANs.",
+      "answer": "Unconditional generation involves generating data samples from a random noise vector without any specific control over the features of the output. The generator produces outputs from a random class or style. In contrast, conditional generation allows you to control the features of the generated outputs by providing additional input, such as a class label or attribute vector. This enables the generation of specific types of data, like images of a particular object or style."
+    },
+    {
+      "type": "long_essay",
+      "question": "Compare and contrast BCE Loss and W-Loss in the context of training GANs. What are the advantages of using W-Loss over BCE Loss?",
+      "answer": "BCE (Binary Cross-Entropy) Loss is a common loss function used in GANs to train the discriminator. The discriminator aims to maximize the BCE Loss by correctly classifying real samples as real and fake samples as fake. The generator, on the other hand, tries to minimize the BCE Loss by generating samples that the discriminator misclassifies as real.\n\nHowever, BCE Loss can suffer from issues such as mode collapse and vanishing gradients. When the discriminator becomes too good at distinguishing between real and fake samples, the gradient signal received by the generator becomes very small, making it difficult for the generator to improve. This can lead to mode collapse, where the generator only produces a limited variety of outputs. W-Loss (Wasserstein Loss), based on the Earth Mover's Distance, addresses these problems by providing a more stable and informative gradient signal, even when the discriminator is highly accurate. This helps prevent mode collapse and vanishing gradients, leading to more stable and diverse GAN training."
+    },
+    {
+      "type": "long_essay",
+      "question": "Describe the training process of a GAN, including the roles of the generator and discriminator, and how their objectives are achieved.",
+      "answer": "The training process of a GAN involves a two-player game between a generator and a discriminator. The generator's goal is to create realistic data samples that fool the discriminator, while the discriminator's goal is to distinguish between real and generated samples.\n\nIn each training iteration, the discriminator is first trained on a batch of real samples and a batch of fake samples generated by the generator. The discriminator's parameters are updated to improve its ability to classify real samples as real and fake samples as fake. Then, the generator is trained by feeding random noise as input and generating fake samples. The discriminator evaluates these fake samples, and the generator's parameters are updated based on the discriminator's output. The generator aims to produce samples that are more likely to be classified as real by the discriminator.\n\nThis adversarial training process continues iteratively, with the generator and discriminator constantly competing and improving. Ideally, the generator eventually learns to produce samples that are indistinguishable from real data, and the discriminator becomes unable to differentiate between real and fake samples."
+    },
+    {
+      "type": "long_essay",
+      "question": "Explain the concept of Z-space in GANs and how it is used for controllable generation and interpolation.",
+      "answer": "The Z-space, also known as the latent space, is the input space of the generator in a GAN. It is a high-dimensional vector space, typically filled with random noise vectors. The generator learns to map these noise vectors from the Z-space to realistic data samples in the output space.\n\nThe Z-space plays a crucial role in controllable generation and interpolation. By manipulating the noise vector in the Z-space, we can control the features of the generated outputs. For example, in conditional GANs, we can append a class label to the noise vector, allowing the generator to produce samples of a specific class. Similarly, we can modify the noise vector to control other attributes of the generated data, such as the pose or expression of a face.\n\nInterpolation in the Z-space involves creating intermediate vectors between two existing noise vectors. When these intermediate vectors are fed into the generator, they produce intermediate data samples that smoothly transition between the characteristics of the two original samples. This allows us to create visually appealing animations or explore the continuous variations in the data distribution."
+    },
+    {
+      "type": "long_essay",
+      "question": "Discuss the benefits and drawbacks of using Batch Normalization in GANs. How does it contribute to the training process, and what potential issues might arise?",
+      "answer": "Batch Normalization (BatchNorm) is a technique used to normalize the activations of each layer in a neural network, including GANs. It helps to stabilize the training process and improve convergence speed.\n\nBenefits of Batch Normalization in GANs:\n\n*   **Faster training:** BatchNorm reduces internal covariate shift, which is the change in the distribution of layer inputs during training. This allows for higher learning rates and faster convergence.\n*   **Improved stability:** BatchNorm helps to prevent vanishing and exploding gradients, which can be a common problem in deep neural networks.\n*   **Regularization:** BatchNorm introduces a slight amount of noise into the training process, which can act as a regularizer and prevent overfitting.\n\nDrawbacks of Batch Normalization in GANs:\n\n*   **Batch size dependency:** BatchNorm's performance can be affected by the batch size. Small batch sizes can lead to inaccurate estimates of the batch statistics, which can degrade performance.\n*   **Mode collapse:** In some cases, BatchNorm has been linked to mode collapse in GANs. This is because BatchNorm can encourage the generator to produce similar outputs for different input noise vectors.\n*   **Computational overhead:** BatchNorm adds a small amount of computational overhead to the training process.\n\nDespite these potential drawbacks, Batch Normalization is generally considered a valuable technique for training GANs, especially for complex architectures. It can significantly improve training speed and stability, leading to better-performing models."
+    },
+    {
+      "type": "long_essay",
+      "question": "Describe the role of the discriminator in providing feedback to the generator during GAN training. How does the discriminator's performance influence the generator's learning process?",
+      "answer": "The discriminator in a GAN serves as a critic, providing essential feedback to the generator, guiding its learning process towards producing more realistic and convincing data. The discriminator's performance directly influences how the generator adapts its parameters to improve its output.\n\nInitially, the generator starts with random noise and produces rudimentary outputs. The discriminator, trained on real data, can easily distinguish these generated samples as fake. This initial feedback is crucial: it signals to the generator that its current outputs are far from the real data distribution. The generator then adjusts its parameters to create samples that are slightly more realistic, aiming to fool the discriminator.\n\nAs the generator improves, the discriminator faces a more challenging task. It needs to refine its ability to discern subtle differences between real and generated samples. The discriminator's continued feedback, in the form of classification accuracy and gradients, guides the generator to further refine its output. If the discriminator consistently identifies the generated samples as fake, the generator receives a strong signal to make more significant adjustments. Conversely, if the discriminator struggles to differentiate between real and generated samples, the generator receives a weaker signal, indicating that its outputs are approaching the real data distribution.\n\nThis cycle of generation and discrimination continues throughout the training process. The discriminator's performance acts as a dynamic loss function for the generator, shaping the generator's learning trajectory. A well-trained discriminator provides informative and nuanced feedback, enabling the generator to learn complex data distributions and produce highly realistic samples. However, if the discriminator becomes too strong or too weak, it can hinder the generator's learning process, leading to instability or mode collapse."
+    }
+  ]
+}

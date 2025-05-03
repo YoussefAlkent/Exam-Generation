@@ -1,0 +1,30 @@
+pytest>=7.3.1
+
+# Core LangChain packages with exact working versions
+langchain==0.3.24
+langchain-community==0.3.23
+langchain-core==0.3.57
+langsmith==0.3.40
+
+# Database and document processing
+chromadb==0.4.17
+PyPDF2>=3.0.1
+pdfplumber==0.10.2
+tiktoken==0.4.0
+
+# Model providers
+langchain-groq>=0.1.0
+langchain-google-genai>=0.0.7
+
+# Embeddings and ML
+sentence-transformers>=2.2.2
+numpy>=1.24.3
+scikit-learn
+
+# Framework and utilities
+flask==2.2.3
+python-dotenv==1.0.0
+pyyaml==6.0
+streamlit>=1.28.0
+tqdm>=4.65.0
+pydantic>=2.0.0

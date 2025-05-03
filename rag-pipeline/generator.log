@@ -1,0 +1,99 @@
+2025-05-03 01:48:03,106 - ExamGenerator - INFO - Environment variables: provider=google, model=gemini-2.0-flash, url=http://localhost:11434
+2025-05-03 01:48:03,180 - ExamGenerator - INFO - Using provider: google with embedding model: models/gemini-embedding-exp-03-07
+2025-05-03 01:48:03,183 - ExamGenerator - WARNING - Unrecognized provider google, falling back to Ollama embeddings
+2025-05-03 01:48:03,187 - ExamGenerator - INFO - Successfully initialized google embeddings with model: models/gemini-embedding-exp-03-07
+2025-05-03 01:48:03,190 - ExamGenerator - INFO - Starting exam generation for course: Generative_Adverserial_Networks
+2025-05-03 01:48:03,192 - ExamGenerator - INFO - Retrieving content from vector store for course: Generative_Adverserial_Networks
+2025-05-03 01:48:03,192 - ExamGenerator - INFO - Starting content retrieval for course: Generative_Adverserial_Networks with query: 'Summarize the main topics and concepts'
+2025-05-03 01:48:03,194 - ExamGenerator - INFO - Using sanitized collection name: Generative_Adverserial_Networks
+2025-05-03 01:48:03,195 - ExamGenerator - INFO - Attempting to load vector store for collection: Generative_Adverserial_Networks
+2025-05-03 01:48:03,195 - ExamGenerator - INFO - Getting vector store for course: Generative_Adverserial_Networks
+2025-05-03 01:48:03,197 - ExamGenerator - INFO - Using persistence directory: ./chroma_db
+2025-05-03 01:48:05,335 - ExamGenerator - INFO - Successfully connected to vector store for collection: Generative_Adverserial_Networks
+2025-05-03 01:48:05,367 - ExamGenerator - INFO - Vector store collection contains 49 document chunks
+2025-05-03 01:48:05,368 - ExamGenerator - INFO - Performing similarity search with k=10
+2025-05-03 01:48:05,382 - ExamGenerator - ERROR - Error retrieving content from vector store: Error raised by inference API HTTP code: 404, {"error":"model \"models/gemini-embedding-exp-03-07\" not found, try pulling it first"}
+2025-05-03 01:48:05,385 - ExamGenerator - ERROR - Traceback (most recent call last):
+  File "/home/spectre/Documents/Subjects/Selected Topics/new version/rag-pipeline/src/generation/generator.py", line 133, in retrieve_content
+    docs = vectorstore.similarity_search(query, k=k)
+  File "/home/spectre/.virtualenvs/localize/lib/python3.10/site-packages/langchain_community/vectorstores/chroma.py", line 350, in similarity_search
+    docs_and_scores = self.similarity_search_with_score(
+  File "/home/spectre/.virtualenvs/localize/lib/python3.10/site-packages/langchain_community/vectorstores/chroma.py", line 439, in similarity_search_with_score
+    query_embedding = self._embedding_function.embed_query(query)
+  File "/home/spectre/.virtualenvs/localize/lib/python3.10/site-packages/langchain_community/embeddings/ollama.py", line 227, in embed_query
+    embedding = self._embed([instruction_pair])[0]
+  File "/home/spectre/.virtualenvs/localize/lib/python3.10/site-packages/langchain_community/embeddings/ollama.py", line 202, in _embed
+    return [self._process_emb_response(prompt) for prompt in iter_]
+  File "/home/spectre/.virtualenvs/localize/lib/python3.10/site-packages/langchain_community/embeddings/ollama.py", line 202, in <listcomp>
+    return [self._process_emb_response(prompt) for prompt in iter_]
+  File "/home/spectre/.virtualenvs/localize/lib/python3.10/site-packages/langchain_community/embeddings/ollama.py", line 176, in _process_emb_response
+    raise ValueError(
+ValueError: Error raised by inference API HTTP code: 404, {"error":"model \"models/gemini-embedding-exp-03-07\" not found, try pulling it first"}
+
+2025-05-03 01:48:05,387 - ExamGenerator - ERROR - Retrieved content is empty or too short: '...'
+2025-05-03 01:48:51,059 - ExamGenerator - INFO - Environment variables: provider=google, model=gemini-2.0-flash, url=http://localhost:11434
+2025-05-03 01:48:51,068 - ExamGenerator - INFO - Using provider: google with embedding model: models/gemini-embedding-exp-03-07
+2025-05-03 01:48:51,074 - ExamGenerator - WARNING - Unrecognized provider google, falling back to Ollama embeddings
+2025-05-03 01:48:51,084 - ExamGenerator - INFO - Successfully initialized google embeddings with model: models/gemini-embedding-exp-03-07
+2025-05-03 01:48:51,091 - ExamGenerator - INFO - Starting exam generation for course: Generative_Adverserial_Networks
+2025-05-03 01:48:51,099 - ExamGenerator - INFO - Retrieving content from vector store for course: Generative_Adverserial_Networks
+2025-05-03 01:48:51,104 - ExamGenerator - INFO - Starting content retrieval for course: Generative_Adverserial_Networks with query: 'Summarize the main topics and concepts'
+2025-05-03 01:48:51,107 - ExamGenerator - INFO - Using sanitized collection name: Generative_Adverserial_Networks
+2025-05-03 01:48:51,109 - ExamGenerator - INFO - Attempting to load vector store for collection: Generative_Adverserial_Networks
+2025-05-03 01:48:51,110 - ExamGenerator - INFO - Getting vector store for course: Generative_Adverserial_Networks
+2025-05-03 01:48:51,111 - ExamGenerator - INFO - Using persistence directory: ./chroma_db
+2025-05-03 01:48:51,125 - ExamGenerator - INFO - Successfully connected to vector store for collection: Generative_Adverserial_Networks
+2025-05-03 01:48:51,137 - ExamGenerator - INFO - Vector store collection contains 49 document chunks
+2025-05-03 01:48:51,138 - ExamGenerator - INFO - Performing similarity search with k=10
+2025-05-03 01:48:51,158 - ExamGenerator - ERROR - Error retrieving content from vector store: Error raised by inference API HTTP code: 404, {"error":"model \"models/gemini-embedding-exp-03-07\" not found, try pulling it first"}
+2025-05-03 01:48:51,161 - ExamGenerator - ERROR - Traceback (most recent call last):
+  File "/home/spectre/Documents/Subjects/Selected Topics/new version/rag-pipeline/src/generation/generator.py", line 133, in retrieve_content
+    docs = vectorstore.similarity_search(query, k=k)
+  File "/home/spectre/.virtualenvs/localize/lib/python3.10/site-packages/langchain_community/vectorstores/chroma.py", line 350, in similarity_search
+    docs_and_scores = self.similarity_search_with_score(
+  File "/home/spectre/.virtualenvs/localize/lib/python3.10/site-packages/langchain_community/vectorstores/chroma.py", line 439, in similarity_search_with_score
+    query_embedding = self._embedding_function.embed_query(query)
+  File "/home/spectre/.virtualenvs/localize/lib/python3.10/site-packages/langchain_community/embeddings/ollama.py", line 227, in embed_query
+    embedding = self._embed([instruction_pair])[0]
+  File "/home/spectre/.virtualenvs/localize/lib/python3.10/site-packages/langchain_community/embeddings/ollama.py", line 202, in _embed
+    return [self._process_emb_response(prompt) for prompt in iter_]
+  File "/home/spectre/.virtualenvs/localize/lib/python3.10/site-packages/langchain_community/embeddings/ollama.py", line 202, in <listcomp>
+    return [self._process_emb_response(prompt) for prompt in iter_]
+  File "/home/spectre/.virtualenvs/localize/lib/python3.10/site-packages/langchain_community/embeddings/ollama.py", line 176, in _process_emb_response
+    raise ValueError(
+ValueError: Error raised by inference API HTTP code: 404, {"error":"model \"models/gemini-embedding-exp-03-07\" not found, try pulling it first"}
+
+2025-05-03 01:48:51,165 - ExamGenerator - ERROR - Retrieved content is empty or too short: '...'
+2025-05-03 01:49:11,170 - ExamGenerator - INFO - Environment variables: provider=google, model=gemini-2.0-flash, url=http://localhost:11434
+2025-05-03 01:49:11,181 - ExamGenerator - INFO - Using provider: google with embedding model: models/gemini-embedding-exp-03-07
+2025-05-03 01:49:11,184 - ExamGenerator - WARNING - Unrecognized provider google, falling back to Ollama embeddings
+2025-05-03 01:49:11,185 - ExamGenerator - INFO - Successfully initialized google embeddings with model: models/gemini-embedding-exp-03-07
+2025-05-03 01:49:11,191 - ExamGenerator - INFO - Starting exam generation for course: Generative_Adverserial
+2025-05-03 01:49:11,193 - ExamGenerator - INFO - Retrieving content from vector store for course: Generative_Adverserial
+2025-05-03 01:49:11,195 - ExamGenerator - INFO - Starting content retrieval for course: Generative_Adverserial with query: 'Summarize the main topics and concepts'
+2025-05-03 01:49:11,196 - ExamGenerator - INFO - Using sanitized collection name: Generative_Adverserial
+2025-05-03 01:49:11,197 - ExamGenerator - INFO - Attempting to load vector store for collection: Generative_Adverserial
+2025-05-03 01:49:11,198 - ExamGenerator - INFO - Getting vector store for course: Generative_Adverserial
+2025-05-03 01:49:11,200 - ExamGenerator - INFO - Using persistence directory: ./chroma_db
+2025-05-03 01:49:11,223 - ExamGenerator - INFO - Successfully connected to vector store for collection: Generative_Adverserial
+2025-05-03 01:49:11,233 - ExamGenerator - INFO - Vector store collection contains 49 document chunks
+2025-05-03 01:49:11,234 - ExamGenerator - INFO - Performing similarity search with k=10
+2025-05-03 01:49:11,250 - ExamGenerator - ERROR - Error retrieving content from vector store: Error raised by inference API HTTP code: 404, {"error":"model \"models/gemini-embedding-exp-03-07\" not found, try pulling it first"}
+2025-05-03 01:49:11,252 - ExamGenerator - ERROR - Traceback (most recent call last):
+  File "/home/spectre/Documents/Subjects/Selected Topics/new version/rag-pipeline/src/generation/generator.py", line 133, in retrieve_content
+    docs = vectorstore.similarity_search(query, k=k)
+  File "/home/spectre/.virtualenvs/localize/lib/python3.10/site-packages/langchain_community/vectorstores/chroma.py", line 350, in similarity_search
+    docs_and_scores = self.similarity_search_with_score(
+  File "/home/spectre/.virtualenvs/localize/lib/python3.10/site-packages/langchain_community/vectorstores/chroma.py", line 439, in similarity_search_with_score
+    query_embedding = self._embedding_function.embed_query(query)
+  File "/home/spectre/.virtualenvs/localize/lib/python3.10/site-packages/langchain_community/embeddings/ollama.py", line 227, in embed_query
+    embedding = self._embed([instruction_pair])[0]
+  File "/home/spectre/.virtualenvs/localize/lib/python3.10/site-packages/langchain_community/embeddings/ollama.py", line 202, in _embed
+    return [self._process_emb_response(prompt) for prompt in iter_]
+  File "/home/spectre/.virtualenvs/localize/lib/python3.10/site-packages/langchain_community/embeddings/ollama.py", line 202, in <listcomp>
+    return [self._process_emb_response(prompt) for prompt in iter_]
+  File "/home/spectre/.virtualenvs/localize/lib/python3.10/site-packages/langchain_community/embeddings/ollama.py", line 176, in _process_emb_response
+    raise ValueError(
+ValueError: Error raised by inference API HTTP code: 404, {"error":"model \"models/gemini-embedding-exp-03-07\" not found, try pulling it first"}
+
+2025-05-03 01:49:11,258 - ExamGenerator - ERROR - Retrieved content is empty or too short: '...'
