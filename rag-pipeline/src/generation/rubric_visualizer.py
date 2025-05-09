@@ -61,7 +61,7 @@ class RubricVisualizer:
         actual_scores = [float(scores.get(c.name, 0)) for c in rubric.criteria]
         
         # Create radar chart
-        angles = [n / float(len(criteria)) * 2 * 3.14159 for n in range(len(criteria))]
+        angles = [n / float(len(criteria)) * 2 * math.pi for n in range(len(criteria))]
         angles += angles[:1]  # Close the loop
         
         max_scores += max_scores[:1]
