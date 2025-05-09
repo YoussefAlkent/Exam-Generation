@@ -89,3 +89,6 @@
 2025-05-03 10:48:16,363 - PDFIngester - INFO - Adding 49 documents to vector store (this might take a while)...
 2025-05-03 10:48:16,364 - PDFIngester - INFO - Processing chunk 1/1 (0-48)
 2025-05-03 10:48:16,373 - PDFIngester - ERROR - Error during vector store ingestion: Error raised by inference API HTTP code: 404, {"error":"model \"llama2\" not found, try pulling it first"}
+2025-05-09 17:12:39,542 - PDFIngester - ERROR - Error during vector store ingestion: Embedding dimension 768 does not match collection dimensionality 3072
+2025-05-09 17:12:57,445 - PDFIngester - ERROR - Error during vector store ingestion: Could not connect to tenant default_tenant. Are you sure it exists?
+2025-05-09 17:13:10,872 - PDFIngester - ERROR - Error during vector store ingestion: Could not connect to tenant default_tenant. Are you sure it exists?

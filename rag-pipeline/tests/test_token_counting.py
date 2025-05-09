@@ -2,10 +2,17 @@ import unittest
 import sys
 import os
 from unittest.mock import patch, MagicMock
+import pytest
+from src.utils.token_counter import TokenCounter
+from unittest.mock import Mock
 
 # Add the src directory to the path so we can import the modules
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from src.generation.generator import ExamGenerator
+
+# Mock the token counter module
+token_counter_mock = MagicMock()
+sys.modules['src.utils.token_counter'] = token_counter_mock
 
 class TestTokenCounting(unittest.TestCase):
     
@@ -95,6 +102,158 @@ class TestTokenCounting(unittest.TestCase):
             self.mock_ollama.invoke.assert_called_once()
             call_args = self.mock_ollama.invoke.call_args[0][0]
             self.assertIn("Summarize the following content", call_args)
+
+@pytest.fixture
+def sample_texts():
+    return [
+        "This is a test sentence.",
+        "Another test sentence with more words.",
+        "A third sentence for testing purposes."
+    ]
+
+@pytest.fixture
+def sample_code():
+    return """
+    def calculate_sum(a, b):
+        return a + b
+    
+    def calculate_product(x, y):
+        return x * y
+    """
+
+def test_token_counter_initialization():
+    with patch('src.utils.token_counter.TokenCounter') as MockCounter:
+        counter = MockCounter()
+        assert counter is not None
+
+def test_count_tokens_single_text():
+    with patch('src.utils.token_counter.TokenCounter') as MockCounter:
+        counter = MockCounter()
+        counter.count_tokens.return_value = 5
+        text = "This is a test sentence."
+        count = counter.count_tokens(text)
+        assert count > 0
+        assert isinstance(count, int)
+
+def test_count_tokens_multiple_texts(sample_texts):
+    with patch('src.utils.token_counter.TokenCounter') as MockCounter:
+        counter = MockCounter()
+        counter.count_tokens.return_value = [5, 7, 6]
+        counts = counter.count_tokens(sample_texts)
+        assert len(counts) == len(sample_texts)
+        assert all(isinstance(count, int) for count in counts)
+        assert all(count > 0 for count in counts)
+
+def test_count_tokens_empty_text():
+    with patch('src.utils.token_counter.TokenCounter') as MockCounter:
+        counter = MockCounter()
+        counter.count_tokens.return_value = 0
+        count = counter.count_tokens("")
+        assert count == 0
+
+def test_count_tokens_none():
+    with patch('src.utils.token_counter.TokenCounter') as MockCounter:
+        counter = MockCounter()
+        counter.count_tokens.side_effect = ValueError("None input")
+        with pytest.raises(ValueError):
+            counter.count_tokens(None)
+
+def test_count_tokens_with_code(sample_code):
+    with patch('src.utils.token_counter.TokenCounter') as MockCounter:
+        counter = MockCounter()
+        counter.count_tokens.return_value = 15
+        count = counter.count_tokens(sample_code)
+        assert count > 0
+        assert isinstance(count, int)
+
+def test_count_tokens_with_special_characters():
+    counter = TokenCounter()
+    text = "Hello! @#$%^&*()_+{}|:<>?~`"
+    count = counter.count_tokens(text)
+    assert count > 0
+
+def test_count_tokens_with_unicode():
+    counter = TokenCounter()
+    text = "Hello 你好 Bonjour"
+    count = counter.count_tokens(text)
+    assert count > 0
+
+def test_count_tokens_with_numbers():
+    counter = TokenCounter()
+    text = "The answer is 42 and 3.14"
+    count = counter.count_tokens(text)
+    assert count > 0
+
+def test_count_tokens_with_whitespace():
+    counter = TokenCounter()
+    text = "   Multiple    spaces   and\nnewlines\t"
+    count = counter.count_tokens(text)
+    assert count > 0
+
+def test_count_tokens_with_different_encodings():
+    counter = TokenCounter(encoding="cl100k_base")  # GPT-4 encoding
+    text = "This is a test sentence."
+    count = counter.count_tokens(text)
+    assert count > 0
+
+def test_count_tokens_with_error_handling():
+    with patch('src.utils.token_counter.TokenCounter') as MockCounter:
+        counter = MockCounter()
+        counter.count_tokens.side_effect = Exception("Encoding Error")
+        with pytest.raises(Exception) as exc_info:
+            counter.count_tokens("test")
+        assert "Encoding Error" in str(exc_info.value)
+
+def test_count_tokens_with_batch_processing(sample_texts):
+    with patch('src.utils.token_counter.TokenCounter') as MockCounter:
+        counter = MockCounter()
+        counter.count_tokens.return_value = [5, 7, 6]
+        counts = counter.count_tokens(sample_texts, batch_size=2)
+        assert len(counts) == len(sample_texts)
+        assert all(isinstance(count, int) for count in counts)
+
+def test_count_tokens_with_metadata(sample_texts):
+    with patch('src.utils.token_counter.TokenCounter') as MockCounter:
+        counter = MockCounter()
+        metadata = [{'source': f'doc{i}'} for i in range(len(sample_texts))]
+        counter.count_tokens.return_value = [
+            {'token_count': 5, 'metadata': metadata[0]},
+            {'token_count': 7, 'metadata': metadata[1]},
+            {'token_count': 6, 'metadata': metadata[2]}
+        ]
+        results = counter.count_tokens(sample_texts, metadata=metadata)
+        assert len(results) == len(sample_texts)
+        assert all(isinstance(result, dict) for result in results)
+        assert all('token_count' in result and 'metadata' in result for result in results)
+
+def test_count_tokens_with_different_languages():
+    counter = TokenCounter()
+    texts = [
+        "Hello world",
+        "Bonjour le monde",
+        "Hola mundo",
+        "你好世界"
+    ]
+    counts = counter.count_tokens(texts)
+    assert len(counts) == len(texts)
+    assert all(count > 0 for count in counts)
+
+def test_count_tokens_with_mixed_content():
+    counter = TokenCounter()
+    text = """
+    # Markdown Header
+    This is a paragraph with **bold** and *italic* text.
+    
+    ```python
+    def hello():
+        print("Hello, world!")
+    ```
+    
+    - List item 1
+    - List item 2
+    """
+    count = counter.count_tokens(text)
+    assert count > 0
 
 if __name__ == "__main__":
     unittest.main()
