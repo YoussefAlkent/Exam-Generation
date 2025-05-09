@@ -1,0 +1,4 @@
+2025-05-09 17:12:39,542 - PDFIngester - ERROR - Error during vector store ingestion: Embedding dimension 768 does not match collection dimensionality 3072 - [ingestion.py:188]
+2025-05-09 17:12:57,445 - PDFIngester - ERROR - Error during vector store ingestion: Could not connect to tenant default_tenant. Are you sure it exists? - [ingestion.py:188]
+2025-05-09 17:13:10,872 - PDFIngester - ERROR - Error during vector store ingestion: Could not connect to tenant default_tenant. Are you sure it exists? - [ingestion.py:188]
+2025-05-09 21:34:31,801 - app - ERROR - Error generating analytics: unsupported operand type(s) for -: 'float' and 'decimal.Decimal' - [app.py:166]
