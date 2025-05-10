@@ -66,7 +66,8 @@ def display_rubric(rubric: Rubric):
             label="Download as JSON",
             data=json_str,
             file_name=f"{rubric.title.lower().replace(' ', '_')}_rubric.json",
-            mime="application/json"
+            mime="application/json",
+            key=f"json_download_{rubric.title.lower().replace(' ', '_')}"
         )
     
     with col2:
@@ -113,7 +114,8 @@ def display_rubric(rubric: Rubric):
                     label="Download as PDF",
                     data=f.read(),
                     file_name=f"{rubric.title.lower().replace(' ', '_')}_rubric.pdf",
-                    mime="application/pdf"
+                    mime="application/pdf",
+                    key=f"pdf_download_{rubric.title.lower().replace(' ', '_')}"
                 )
             
             # Clean up temporary file
@@ -152,7 +154,11 @@ def display_criteria(rubric: Rubric):
     # Create sliders for each criterion
     new_weights = {}
     with weight_container:
-        cols = st.columns(len(rubric.criteria))
+        # Ensure we have at least one criterion
+        num_criteria = max(1, len(rubric.criteria))
+        # Create columns with equal width
+        cols = st.columns([1] * num_criteria)
+        
         for i, criterion in enumerate(rubric.criteria):
             with cols[i]:
                 new_weight = st.slider(
@@ -175,7 +181,7 @@ def display_criteria(rubric: Rubric):
     
     # Add apply button if weights have changed
     if new_weights != current_weights:
-        if st.button("Apply New Weights"):
+        if st.button("Apply New Weights", key="apply_weights_button"):
             try:
                 # Update weights in the rubric
                 for criterion in rubric.criteria:
@@ -231,7 +237,7 @@ def display_scoring(rubric: Rubric):
         )
         scores[criterion.name] = Decimal(str(score))
     
-    if st.button("Calculate Score"):
+    if st.button("Calculate Score", key="calculate_score_button"):
         try:
             total_score = rubric.calculate_score(scores)
             feedback = rubric.generate_feedback(scores)
@@ -418,7 +424,7 @@ with st.sidebar:
         }
     
     # Save configuration button
-    if st.button("Apply Configuration"):
+    if st.button("Apply Configuration", key="apply_config_button"):
         st.session_state.model_config = model_config
         st.success(f"Configuration updated for {provider} provider")
         
@@ -475,7 +481,7 @@ with tab1:
     course_name = st.text_input("Enter course name", value=st.session_state.course_name)
     
     # Button to start ingestion process
-    if st.button("Process PDFs and Create Vector Database"):
+    if st.button("Process PDFs and Create Vector Database", key="process_pdfs_button"):
         if not course_name:
             st.error("Please enter a course name")
         else:
@@ -552,7 +558,7 @@ with tab2:
                 include_test_cases = st.checkbox("Include Test Cases", value=True, key="exam_test_cases")
                 include_solution = st.checkbox("Include Solution", value=True, key="exam_solution")
         
-        if st.button("Generate Exam"):
+        if st.button("Generate Exam", key="generate_exam_button"):
             if not st.session_state.course_name:
                 st.error("Please enter a course name")
             else:
@@ -723,7 +729,7 @@ with tab2:
                 include_solution = st.checkbox("Include Solution", value=True, key="assignment_solution")
                 include_documentation = st.checkbox("Include Documentation Requirements", value=True)
         
-        if st.button("Generate Assignment"):
+        if st.button("Generate Assignment", key="generate_assignment_button"):
             if not st.session_state.course_name:
                 st.error("Please enter a course name")
             else:
@@ -901,7 +907,7 @@ with tab2:
                 include_documentation = st.checkbox("Include Documentation Requirements", value=True)
                 include_deployment = st.checkbox("Include Deployment Instructions", value=True)
         
-        if st.button("Generate Project"):
+        if st.button("Generate Project", key="generate_project_button"):
             if not st.session_state.course_name:
                 st.error("Please enter a course name")
             else:
@@ -1093,7 +1099,7 @@ with tab3:
                     st.success("Successfully loaded student answers")
                     
                     # Grade button
-                    if st.button("Grade Submission"):
+                    if st.button("Grade Submission", key="grade_submission_button"):
                         with st.spinner("Grading submission..."):
                             try:
                                 model_config = st.session_state.model_config
@@ -1137,7 +1143,7 @@ with tab3:
                                 )
                                 
                                 # Critique button
-                                if st.button("Generate Critique"):
+                                if st.button("Generate Critique", key="generate_critique_button"):
                                     with st.spinner("Generating critique..."):
                                         try:
                                             critic = ExamCritic(model_name=model_config.get("model_name", None))
@@ -1202,7 +1208,7 @@ with tab3:
                         st.error(f"Invalid JSON format in answer file {answer_file.name}")
                 
                 if student_answer_list:
-                    if st.button("Grade Submissions"):
+                    if st.button("Grade Submissions", key="grade_submissions_button"):
                         with st.spinner(f"Grading {len(student_answer_list)} submissions..."):
                             try:
                                 model_config = st.session_state.model_config
@@ -1324,7 +1330,7 @@ with tab4:
         description = st.text_area("Description")
         total_points = st.number_input("Total Points", min_value=0, max_value=1000, value=100)
         
-        if st.button("Generate Rubric"):
+        if st.button("Generate Rubric", key="generate_rubric_button"):
             if title and description:
                 try:
                     rubric = st.session_state.rubric_generator.generate_assignment_rubric(
@@ -1340,11 +1346,130 @@ with tab4:
             else:
                 st.error("Please fill in all required fields.")
         
+        # Add new section for PDF-based rubric generation
+        st.markdown("### Generate Rubric from PDF")
+        st.markdown("Upload a PDF containing project/module information to generate a customized rubric.")
+        
+        uploaded_pdf = st.file_uploader("Upload PDF", type="pdf", key="rubric_pdf")
+        
+        if uploaded_pdf:
+            # Save uploaded file temporarily
+            with tempfile.NamedTemporaryFile(delete=False, suffix='.pdf') as tmp:
+                pdf_path = tmp.name
+                tmp.write(uploaded_pdf.getbuffer())
+            
+            try:
+                # Display PDF content analysis
+                with st.spinner("Analyzing PDF content..."):
+                    content_analysis = st.session_state.rubric_generator.content_analyzer.analyze_content(pdf_path)
+                    
+                    # Display extracted information
+                    with st.expander("Extracted Information", expanded=True):
+                        st.markdown("#### Learning Outcomes")
+                        for outcome in content_analysis["learning_outcomes"]:
+                            st.markdown(f"- {outcome}")
+                        
+                        st.markdown("#### Assessment Criteria")
+                        for criterion in content_analysis["assessment_criteria"]:
+                            st.markdown(f"- {criterion}")
+                        
+                        st.markdown("#### Project Requirements")
+                        for req in content_analysis["project_requirements"]:
+                            st.markdown(f"- {req}")
+                    
+                    # Display suggested criteria
+                    st.markdown("#### Suggested Rubric Criteria")
+                    for criterion in content_analysis["suggested_criteria"]:
+                        with st.expander(f"{criterion['name']} ({criterion['weight']*100}%)"):
+                            st.markdown(f"**Description:** {criterion['description']}")
+                            st.markdown(f"**Max Score:** {criterion['max_score']}")
+                            
+                            st.markdown("**Performance Levels:**")
+                            for level in criterion['levels']:
+                                st.markdown(f"- **{level['description']}**: {level['feedback']}")
+                
+                # Form for finalizing the rubric
+                st.markdown("### Finalize Rubric")
+                title = st.text_input("Rubric Title", value=f"Rubric for {uploaded_pdf.name}", key="pdf_rubric_title")
+                description = st.text_area("Rubric Description", key="pdf_rubric_description")
+                total_points = st.number_input("Total Points", min_value=0, max_value=1000, value=100, key="pdf_rubric_total_points")
+                
+                # Allow editing of criteria
+                st.markdown("#### Edit Criteria")
+                edited_criteria = []
+                for i, criterion in enumerate(content_analysis["suggested_criteria"]):
+                    with st.expander(f"Edit {criterion['name']}", expanded=False):
+                        name = st.text_input("Name", value=criterion['name'], key=f"pdf_name_{i}")
+                        description = st.text_area("Description", value=criterion['description'], key=f"pdf_desc_{i}")
+                        weight = st.slider("Weight (%)", 0, 100, int(criterion['weight']*100), key=f"pdf_weight_{i}")
+                        max_score = st.number_input("Max Score", 0, 100, int(criterion['max_score']), key=f"pdf_score_{i}")
+                        
+                        st.markdown("**Performance Levels**")
+                        levels = []
+                        for j, level in enumerate(criterion['levels']):
+                            col1, col2 = st.columns([1, 3])
+                            with col1:
+                                level_name = st.text_input("Level", value=level['description'], key=f"pdf_level_{i}_{j}")
+                            with col2:
+                                feedback = st.text_area("Feedback", value=level['feedback'], key=f"pdf_feedback_{i}_{j}")
+                            levels.append({"description": level_name, "feedback": feedback})
+                        
+                        edited_criteria.append({
+                            "name": name,
+                            "description": description,
+                            "weight": weight/100,
+                            "max_score": max_score,
+                            "levels": levels
+                        })
+                
+                if st.button("Generate Rubric", key="pdf_generate_rubric_button"):
+                    try:
+                        # Convert edited criteria to Criterion objects
+                        criteria = []
+                        for criterion_data in edited_criteria:
+                            criterion = Criterion(
+                                name=criterion_data["name"],
+                                description=criterion_data["description"],
+                                weight=Decimal(str(criterion_data["weight"])),
+                                max_score=Decimal(str(criterion_data["max_score"])),
+                                levels=criterion_data["levels"]
+                            )
+                            criteria.append(criterion)
+                        
+                        # Create the rubric
+                        rubric = Rubric(
+                            rubric_type=RubricType.PROJECT,  # Default to PROJECT type
+                            title=title,
+                            description=description,
+                            criteria=criteria,
+                            total_points=Decimal(str(total_points)),
+                            feedback_template=st.session_state.rubric_generator._generate_feedback_template(
+                                content_analysis["learning_outcomes"],
+                                content_analysis["assessment_criteria"]
+                            )
+                        )
+                        
+                        st.session_state.current_rubric = rubric
+                        st.success("Rubric generated successfully!")
+                        
+                        # Display the generated rubric
+                        display_rubric(rubric)
+                        
+                    except Exception as e:
+                        st.error(f"Error generating rubric: {str(e)}")
+                
+            except Exception as e:
+                st.error(f"Error analyzing PDF: {str(e)}")
+            finally:
+                # Clean up temporary file
+                os.unlink(pdf_path)
+        
         # Display current rubric if exists
         if st.session_state.current_rubric:
+            st.markdown("### Current Rubric")
             display_rubric(st.session_state.current_rubric)
         else:
-            st.info("Create a new rubric using the form above.")
+            st.info("Create a new rubric using one of the methods above.")
 
 # Add some styling
 st.markdown("""

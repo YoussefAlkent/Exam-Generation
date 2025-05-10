@@ -9,7 +9,6 @@
   - Code explanation questions
 - [x] Implement difficulty levels for questions (Easy, Medium, Hard)
 - [x] Implement question tagging system for better organization
-- [ ] Add support for image-based questions
 
 ### 2. Assignment & Project Generation
 - [x] Implement open-ended assignment generation:
@@ -33,13 +32,13 @@
   - Intermediate projects
   - Advanced projects
   - Capstone projects
-- [ ] Generate PDF output for assignments and projects:
+- [x] Generate PDF output for assignments and projects:
   - Professional formatting
   - Table of contents
   - Code block formatting
   - Image and diagram support
   - Page numbering and headers
-- [ ] Include suggested grading rubric in generated PDFs:
+- [x] Include suggested grading rubric in generated PDFs:
   - Rubric section at the end of the document
   - Clear grading criteria
   - Point distribution
@@ -94,7 +93,7 @@
   - Creation date
   - Course information
   - Version tracking
-- [ ] Add PDF export options:
+- [x] Add PDF export options:
   - Different paper sizes
   - Multiple file formats
   - Compression options

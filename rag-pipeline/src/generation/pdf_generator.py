@@ -632,6 +632,11 @@ class PDFGenerator:
                 ('FONTSIZE', (0, 1), (-1, -1), 10),
                 ('GRID', (0, 0), (-1, -1), 1, colors.HexColor('#DEE2E6')),
                 ('ALIGN', (1, 1), (2, -1), 'CENTER'),
+                ('WORDWRAP', (0, 0), (-1, -1), True),  # Enable word wrapping for all cells
+                ('LEFTPADDING', (0, 0), (-1, -1), 6),  # Add left padding
+                ('RIGHTPADDING', (0, 0), (-1, -1), 6),  # Add right padding
+                ('TOPPADDING', (0, 0), (-1, -1), 6),    # Add top padding
+                ('BOTTOMPADDING', (0, 0), (-1, -1), 6),  # Add bottom padding
             ]))
             
             elements.append(table)

@@ -1,11 +1,13 @@
 from typing import List, Dict, Any, Optional
 from decimal import Decimal
 from src.generation.rubric_types import Rubric, RubricType, Criterion, FeedbackTemplate
+from src.generation.rubric_content_analyzer import RubricContentAnalyzer
 
 class RubricGenerator:
     def __init__(self):
         """Initialize the rubric generator."""
         self._setup_default_templates()
+        self.content_analyzer = RubricContentAnalyzer()
         
     def _setup_default_templates(self):
         """Set up default feedback templates for different rubric types."""
@@ -328,4 +330,159 @@ class RubricGenerator:
             criteria=criteria,
             total_points=total_points,
             feedback_template=self.default_templates[RubricType.CODE_QUALITY]
-        ) 
+        )
+
+    def generate_rubric_from_content(
+        self,
+        pdf_path: str,
+        title: str,
+        description: str,
+        total_points: Decimal = Decimal('100'),
+        rubric_type: Optional[RubricType] = None
+    ) -> Rubric:
+        """
+        Generate a rubric based on content analysis of a PDF.
+        
+        Args:
+            pdf_path: Path to the PDF file containing project/module information
+            title: Title of the rubric
+            description: Description of the rubric
+            total_points: Total points possible
+            rubric_type: Optional rubric type to guide the generation
+            
+        Returns:
+            Generated Rubric object
+        """
+        try:
+            # Analyze the content
+            content_analysis = self.content_analyzer.analyze_content(pdf_path)
+            
+            # Convert suggested criteria to Criterion objects
+            criteria = []
+            for criterion_data in content_analysis["suggested_criteria"]:
+                criterion = Criterion(
+                    name=criterion_data["name"],
+                    description=criterion_data["description"],
+                    weight=Decimal(str(criterion_data["weight"])),
+                    max_score=Decimal(str(criterion_data["max_score"])),
+                    levels=criterion_data["levels"]
+                )
+                criteria.append(criterion)
+            
+            # Determine rubric type if not specified
+            if not rubric_type:
+                # Analyze content to determine most appropriate type
+                if any("code" in req.lower() for req in content_analysis["project_requirements"]):
+                    rubric_type = RubricType.CODE_QUALITY
+                elif any("document" in req.lower() for req in content_analysis["project_requirements"]):
+                    rubric_type = RubricType.DOCUMENTATION
+                elif any("present" in req.lower() for req in content_analysis["project_requirements"]):
+                    rubric_type = RubricType.PRESENTATION
+                else:
+                    rubric_type = RubricType.PROJECT
+            
+            # Create feedback template based on content
+            feedback_template = self._generate_feedback_template(
+                content_analysis["learning_outcomes"],
+                content_analysis["assessment_criteria"]
+            )
+            
+            # Create and return the rubric
+            return Rubric(
+                rubric_type=rubric_type,
+                title=title,
+                description=description,
+                criteria=criteria,
+                total_points=total_points,
+                feedback_template=feedback_template
+            )
+            
+        except Exception as e:
+            logger.error(f"Error generating rubric from content: {e}")
+            # Fall back to default rubric generation
+            return self.generate_assignment_rubric(
+                title=title,
+                description=description,
+                total_points=total_points
+            )
+
+    def _generate_feedback_template(
+        self,
+        learning_outcomes: List[str],
+        assessment_criteria: List[str]
+    ) -> FeedbackTemplate:
+        """Generate a feedback template based on learning outcomes and assessment criteria."""
+        try:
+            # Create a prompt for the model to generate feedback
+            prompt = f"""
+            Based on the following learning outcomes and assessment criteria, generate:
+            1. A positive feedback template for excellent work
+            2. A negative feedback template for work needing improvement
+            3. A list of specific suggestions for improvement
+            
+            Learning Outcomes:
+            {learning_outcomes}
+            
+            Assessment Criteria:
+            {assessment_criteria}
+            
+            Generate feedback in the following format:
+            Positive Feedback: [positive feedback]
+            Negative Feedback: [negative feedback]
+            Suggestions:
+            - [suggestion 1]
+            - [suggestion 2]
+            - [suggestion 3]
+            """
+            
+            response = self.content_analyzer.model.invoke(prompt)
+            
+            # Handle AIMessage objects
+            if hasattr(response, 'content'):
+                response_text = response.content
+            elif hasattr(response, 'text'):
+                response_text = response.text
+            elif isinstance(response, str):
+                response_text = response
+            else:
+                response_text = str(response)
+            
+            # Parse the response
+            positive_feedback = ""
+            negative_feedback = ""
+            suggestions = []
+            
+            current_section = None
+            for line in response_text.split('\n'):
+                line = line.strip()
+                if not line:
+                    continue
+                    
+                if line.startswith('Positive Feedback:'):
+                    current_section = 'positive'
+                    positive_feedback = line.replace('Positive Feedback:', '').strip()
+                elif line.startswith('Negative Feedback:'):
+                    current_section = 'negative'
+                    negative_feedback = line.replace('Negative Feedback:', '').strip()
+                elif line.startswith('Suggestions:'):
+                    current_section = 'suggestions'
+                elif current_section == 'suggestions' and line.startswith('-'):
+                    suggestions.append(line.lstrip('- ').strip())
+            
+            return FeedbackTemplate(
+                positive=positive_feedback,
+                negative=negative_feedback,
+                suggestions=suggestions
+            )
+        except Exception as e:
+            logger.error(f"Error generating feedback template: {str(e)}")
+            # Return a default template if generation fails
+            return FeedbackTemplate(
+                positive="Excellent work! The submission meets or exceeds all requirements.",
+                negative="The submission needs improvement in some areas.",
+                suggestions=[
+                    "Review the requirements carefully",
+                    "Ensure all deliverables are complete",
+                    "Check for proper formatting and organization"
+                ]
+            ) 
